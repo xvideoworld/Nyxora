@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nyxora — Watch Free Videos</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="header" id="header">
+  <div class="header-inner">
+    <div class="logo" onclick="scrollToTop()">
+      <div class="logo-icon">N</div>
+      <span>Nyxora</span>
+    </div>
+    <div class="search-bar" id="searchBar">
+      <input type="text" placeholder="Search YouTube, Instagram, TikTok..." id="searchInput" onkeydown="if(event.key==='Enter')searchVideos()">
+      <button class="search-btn" onclick="searchVideos()"><i class="fas fa-search"></i></button>
+    </div>
+    <div class="header-actions">
+      <button class="header-btn" onclick="toggleMobileSearch()"><i class="fas fa-search"></i></button>
+      <button class="header-btn" onclick="refreshFeed()"><i class="fas fa-sync-alt"></i></button>
+    </div>
+  </div>
+</header>
+
+<!-- CATEGORIES -->
+<div class="categories-wrap">
+  <div class="categories" id="categories">
+    <button class="cat-btn active" onclick="switchCat('trending',this)"><i class="fas fa-fire"></i> Trending</button>
+    <button class="cat-btn" onclick="switchCat('music',this)"><i class="fas fa-music"></i> Music</button>
+    <button class="cat-btn" onclick="switchCat('gaming',this)"><i class="fas fa-gamepad"></i> Gaming</button>
+    <button class="cat-btn" onclick="switchCat('movies',this)"><i class="fas fa-film"></i> Movies</button>
+    <button class="cat-btn" onclick="switchCat('comedy',this)"><i class="fas fa-laugh"></i> Comedy</button>
+    <button class="cat-btn" onclick="switchCat('sports',this)"><i class="fas fa-running"></i> Sports</button>
+    <button class="cat-btn" onclick="switchCat('education',this)"><i class="fas fa-graduation-cap"></i> Education</button>
+    <button class="cat-btn" onclick="switchCat('news',this)"><i class="fas fa-newspaper"></i> News</button>
+  </div>
+</div>
+
+<!-- MAIN -->
+<main class="main" id="mainContent">
+  <!-- Shorts Section -->
+  <div class="section-label">
+    <h2><i class="fas fa-bolt" style="color:var(--primary)"></i> Shorts <span class="badge">Trending Now</span></h2>
+  </div>
+  <div class="shorts-grid" id="shortsGrid"><div class="loading-spinner"><div class="spinner"></div></div></div>
+  <div class="section-divider"></div>
+  
+  <!-- Videos Section -->
+  <div class="section-label">
+    <h2><i class="fas fa-play-circle" style="color:var(--primary)"></i> Featured Videos</h2>
+  </div>
+  <div class="video-grid" id="videoGrid"><div class="loading-spinner"><div class="spinner"></div></div></div>
+  <div class="section-divider"></div>
+  
+  <!-- More Shorts -->
+  <div class="section-label" id="shortsSection">
+    <h2><i class="fab fa-instagram" style="color:#e4405f"></i> More Reels & TikToks</h2>
+  </div>
+  <div class="shorts-grid" id="shortsGrid2"><div class="loading-spinner"><div class="spinner"></div></div></div>
+  <div class="section-divider"></div>
+  
+  <!-- More Videos -->
+  <div class="section-label" id="videosSection">
+    <h2><i class="fab fa-youtube" style="color:#ff0000"></i> More Videos</h2>
+  </div>
+  <div class="video-grid" id="videoGrid2"><div class="loading-spinner"><div class="spinner"></div></div></div>
+  
+  <div class="load-more-wrap">
+    <button class="load-more" onclick="loadAllMore()"><i class="fas fa-redo"></i> Load More</button>
+  </div>
+</main>
+
+<!-- PLAYER OVERLAY -->
+<div class="player-overlay" id="playerOverlay">
+  <div class="player-page">
+    <div class="player-header">
+      <button class="back-btn" onclick="closePlayer()"><i class="fas fa-arrow-left"></i></button>
+      <div class="player-header-actions">
+        <button onclick="shareVideo()" title="Share"><i class="fas fa-share-alt"></i></button>
+        <button class="download-btn" onclick="downloadVideo()"><i class="fas fa-download"></i> Download</button>
+      </div>
+    </div>
+    <div class="video-container">
+      <video id="playerVideo" controls autoplay playsinline></video>
+    </div>
+    <div class="video-info-section">
+      <h1 class="player-title" id="playerTitle">Title</h1>
+      <div class="player-stats" id="playerStats">
+        <span class="stat-item"><i class="fas fa-eye"></i> <span id="statViews">0</span></span>
+        <span class="stat-item"><i class="fas fa-thumbs-up"></i> <span id="statLikes">0</span></span>
+        <span class="stat-item"><i class="fas fa-comment"></i> <span id="statComments">0</span></span>
+        <span class="stat-item"><i class="fas fa-clock"></i> <span id="statDuration">0:00</span></span>
+        <span class="stat-item"><i class="fas fa-calendar"></i> <span id="statPublished">Recently</span></span>
+      </div>
+      <div class="player-actions-row">
+        <button class="action-btn" id="likeBtn" onclick="toggleLike()"><i class="fas fa-thumbs-up"></i> Like</button>
+        <button class="action-btn" onclick="shareVideo()"><i class="fas fa-share-alt"></i> Share</button>
+        <button class="action-btn" onclick="downloadVideo()"><i class="fas fa-download"></i> Download</button>
+      </div>
+      <div class="player-author-row">
+        <div class="author-avatar" id="authorAvatar"><i class="fas fa-user"></i></div>
+        <div class="author-info">
+          <h3 id="authorName">Author</h3>
+          <p id="authorSubs">Creator</p>
+        </div>
+        <button class="subscribe-btn">Subscribe</button>
+      </div>
+      <div class="player-description">
+        <h4>Description</h4>
+        <p id="videoDescription">No description.</p>
+      </div>
+    </div>
+    <div class="comments-section">
+      <div class="comments-header">
+        <h3>Comments <span id="commentCount">(0)</span></h3>
+      </div>
+      <div id="commentsList"><div class="loading-spinner"><div class="spinner"></div></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- MOBILE NAV -->
+<nav class="mobile-nav">
+  <a href="#" onclick="scrollToTop()" class="active"><i class="fas fa-home"></i> Home</a>
+  <a href="#" onclick="switchCat('trending',document.querySelector('.cat-btn'))"><i class="fas fa-fire"></i> Trending</a>
+  <a href="#" onclick="refreshFeed()"><i class="fas fa-sync-alt"></i> Refresh</a>
+</nav>
+
+<script src="js/api.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>
