@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>প্রিমিয়াম মড এপিকে স্টোর (Premium Mod APK Store)</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Plus+Jakarta+Sans:wght@500;700;800&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<style>
+
+:root{
+  --bg:#e9edf2;
+  --dark:#1a202c;
+  --light:#ffffff;
+  --shadow1:#cbd5e1;
+  --shadow2:#ffffff;
+  --text-muted:#64748b;
+  --accent:#3b82f6;
+  --accent-mod:#ef4444;
+}
+
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+}
+
+body{
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  background:var(--bg);
+  color:var(--dark);
+  min-height:100vh;
+  padding-bottom:120px;
+}
+
+/* TOPBAR */
+
+.topbar{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:18px;
+  position:sticky;
+  top:0;
+  z-index:100;
+  background:var(--bg);
+}
+
+/* লোগো মেকওভার */
+.logo-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 52px;
+  height: 52px;
+  border-radius: 16px;
+  background: var(--bg);
+  padding: 2px;
+  box-shadow:
+  6px 6px 12px var(--shadow1),
+  -6px -6px 12px var(--shadow2);
+}
+
+.logo{
+  width:100%;
+  height:100%;
+  border-radius:14px;
+  object-fit:cover;
+  border: 1px solid rgba(255,255,255,0.8);
+}
+
+.search-wrap{
+  flex:1;
+  display:flex;
+  align-items:center;
+  border-radius:20px;
+  overflow:hidden;
+  background:var(--bg);
+  box-shadow:
+  inset 4px 4px 10px var(--shadow1),
+  inset -4px -4px 10px var(--shadow2);
+}
+
+.search-wrap input{
+  flex:1;
+  border:none;
+  outline:none;
+  background:none;
+  padding:14px 18px;
+  font-size:14px;
+  font-weight: 500;
+  color: var(--dark);
+}
+
+.search-wrap button{
+  padding: 0 20px;
+  height:50px;
+  border:none;
+  background:none;
+  font-size:16px;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.search-wrap button:hover{
+  color: var(--accent);
+}
+
+/* SECTION TITLE */
+
+.section-title{
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  padding: 20px 20px 0px;
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--dark);
+}
+
+/* FEATURED BANNER */
+
+.banner{
+  margin:12px 20px 24px;
+  height:190px;
+  border-radius:28px;
+  padding:26px;
+  display:flex;
+  align-items:flex-end;
+  position:relative;
+  overflow:hidden;
+  background:linear-gradient(135deg,#0f172a,#1e293b);
+  box-shadow:
+  10px 10px 20px var(--shadow1),
+  -10px -10px 20px var(--shadow2);
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.banner-title{
+  color:#fff;
+  font-size:28px;
+  font-weight:800;
+  letter-spacing: -0.5px;
+}
+
+.banner-sub{
+  color:#94a3b8;
+  margin-top:6px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.banner-badge{
+  position:absolute;
+  top:20px;
+  right:20px;
+  background:rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(5px);
+  color:#fff;
+  padding:6px 14px;
+  border-radius:14px;
+  font-size:11px;
+  font-weight:700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* APP GRID */
+
+.app-grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:18px;
+  padding:12px 20px 24px;
+}
+
+.app-card-link {
+  text-decoration: none;
+  color: inherit;
+}
+
+.app-card{
+  padding:24px 14px;
+  border-radius:26px;
+  text-align:center;
+  background:var(--bg);
+  box-shadow:
+  8px 8px 16px var(--shadow1),
+  -8px -8px 16px var(--shadow2);
+  transition: transform 0.2s ease;
+  cursor: pointer;
+  height: 100%;
+}
+
+.app-card:active{
+  transform: scale(0.96);
+}
+
+/* আইকন বক্সের নিউমরফিজম ডিজাইন */
+.app-icon-box{
+  width:58px;
+  height:58px;
+  border-radius:18px;
+  margin:0 auto 16px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size: 22px;
+  box-shadow:
+  inset 4px 4px 8px var(--shadow1),
+  inset -4px -4px 8px var(--shadow2);
+}
+
+/* প্রতিটা আইকন বক্সের আলাদা কালার থিম */
+.app-grid .app-card-link:nth-child(1) .app-icon-box { color: #3b82f6; }
+.app-grid .app-card-link:nth-child(2) .app-icon-box { color: #ec4899; }
+.app-grid .app-card-link:nth-child(3) .app-icon-box { color: #10b981; }
+.app-grid .app-card-link:nth-child(4) .app-icon-box { color: #eab308; } /* Lightroom Custom Yellow Gold */
+.app-grid .app-card-link:nth-child(5) .app-icon-box { color: #8b5cf6; }
+
+.app-name{
+  font-size:16px;
+  font-weight:700;
+  color: var(--dark);
+}
+
+.app-type{
+  margin-top:4px;
+  color:var(--text-muted);
+  font-size:12px;
+  font-weight: 500;
+}
+
+.app-status{
+  display:inline-block;
+  margin-top:10px;
+  font-size:10px;
+  font-weight:800;
+  text-transform: uppercase;
+  color: var(--accent-mod);
+  letter-spacing: 0.5px;
+}
+
+/* USER PORTAL CARD */
+
+.portal-box{
+  margin:12px 20px 24px;
+  padding:24px;
+  border-radius:28px;
+  background:var(--bg);
+  box-shadow:
+  10px 10px 20px var(--shadow1),
+  -10px -10px 20px var(--shadow2);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap:16px;
+}
+
+.portal-info{
+  flex: 1;
+}
+
+.portal-title{
+  font-size:16px;
+  font-weight:700;
+}
+
+.portal-sub{
+  font-size:12px;
+  color: var(--text-muted);
+  margin-top:2px;
+}
+
+.portal-btn{
+  padding:12px 20px;
+  border:none;
+  border-radius:16px;
+  background:var(--bg);
+  font-size:13px;
+  font-weight:700;
+  color: var(--accent);
+  box-shadow:
+  5px 5px 10px var(--shadow1),
+  -5px -5px 10px var(--shadow2);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.portal-btn:active{
+  box-shadow:
+  inset 3px 3px 6px var(--shadow1),
+  inset -3px -3px 6px var(--shadow2);
+}
+
+/* BOTTOM NAV */
+
+.bottom-nav{
+  position:fixed;
+  left:20px;
+  right:20px;
+  bottom:20px;
+  height:75px;
+  border-radius:24px;
+  background:var(--bg);
+  display:flex;
+  align-items:center;
+  justify-content:space-around;
+  box-shadow:
+  10px 10px 20px var(--shadow1),
+  -10px -10px 20px var(--shadow2);
+  z-index: 1000;
+}
+
+.nav-item{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content: center;
+  height: 100%;
+  flex: 1;
+  cursor: pointer;
+  color:var(--text-muted);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.nav-icon{
+  font-size:20px;
+  margin-bottom: 5px;
+}
+
+.nav-text{
+  font-size:11px;
+  font-weight: 600;
+}
+
+.active{
+  color:var(--dark);
+}
+
+.active .nav-icon {
+  color: var(--accent);
+}
+
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="logo-container">
+    <img src="https://private-user-images.githubusercontent.com/272389880/594056306-8eb64dc8-b832-4006-94fc-760f278b098a.png?jwt=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3NzkxMDc4NDAsIm5iZiI6MTc3OTEwNzU0MCwicGF0aCI6Ii8yNzIzODk4ODAvNTk0MDU2MzA2LThlYjY0ZGM4LWI4MzItNDAwNi05NGZjLTc2MGYyNzhiMDk4YS5wbmc_WC1BbXotQWxnb3JpdGhtPUFXUzQtSE1BQy1TSEEyNTYmWC1BbXotQ3JlZGVudGlhbD1BS0lBVkNPRFlMU0E1M1BRSzRaQSUyRjIwMjYwNTE4JTJGdXMtZWFzdC0xJTJGczMlMkZhd3M0X3JlcXVlc3QmWC1BbXotRGF0ZT0yMDI2MDUxOFQxMjMyMjBaJlgtQW16LUV4cGlyZXM9MzAwJlgtQW16LVNpZ25hdHVyZT1jZWJkODM3ZWI1M2U0ZjY0ZmUyODA0ZWUyYzg2OWEwNGRlZGVlYjQ5MTlhYWFlODVlMDEyODM0YTFkNjkyYmRjJlgtQW16LVNpZ25hlZEhlYWRlcnM9aG9zdCZyZXNwb25zZS1jb250ZW50LXR5cGU9aW1hZ2UlMkZwbmcifQ.VOe-uLCIERcdhcs0l3f3hxZinm_oldT2-Ru5i0sGEEk" class="logo" alt="Logo">
+  </div>
+  <div class="search-wrap">
+    <input type="text" placeholder="প্রিমিয়াম মড খুঁজুন...">
+    <button><i class="fa-solid fa-magnifying-glass"></i></button>
+  </div>
+</div>
+
+<a href="https://github.com/xvideoworld/Nyxora/releases/download/11.3.3/lightroom-11.3.3-an1.com.apk" class="banner">
+  <div>
+    <div class="banner-title">Lightroom Pro</div>
+    <div class="banner-sub">প্রিমিয়াম আনলকড v11.3.3</div>
+  </div>
+  <div class="banner-badge">ডাউনলোড করুন</div>
+</a>
+
+<div class="section-title">
+  চলতি সপ্তাহের সেরা প্রিমিয়াম মডসমূহ
+</div>
+
+<div class="app-grid">
+
+  <a href="#" class="app-card-link">
+    <div class="app-card">
+      <div class="app-icon-box"><i class="fa-solid fa-video"></i></div>
+      <div class="app-name">CapCut</div>
+      <div class="app-type">ভিডিও এডিটর</div>
+      <div class="app-status">মড আনলকড</div>
+    </div>
+  </a>
+
+  <a href="#" class="app-card-link">
+    <div class="app-card">
+      <div class="app-icon-box"><i class="fa-solid fa-camera"></i></div>
+      <div class="app-name">Picsart</div>
+      <div class="app-type">ফটো গোল্ড</div>
+      <div class="app-status">গোল্ড অ্যাক্টিভ</div>
+    </div>
+  </a>
+
+  <a href="#" class="app-card-link">
+    <div class="app-card">
+      <div class="app-icon-box"><i class="fa-solid fa-clapperboard"></i></div>
+      <div class="app-name">InShot</div>
+      <div class="app-type">মিডিয়া প্রো</div>
+      <div class="app-status">প্রো ফিচারস</div>
+    </div>
+  </a>
+
+  <a href="https://github.com/xvideoworld/Nyxora/releases/download/11.3.3/lightroom-11.3.3-an1.com.apk" class="app-card-link">
+    <div class="app-card">
+      <div class="app-icon-box"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
+      <div class="app-name">Lightroom</div>
+      <div class="app-type">প্রো ফটো এডিটর</div>
+      <div class="app-status">প্রিমিয়াম আনলকড</div>
+    </div>
+  </a>
+
+  <a href="#" class="app-card-link">
+    <div class="app-card">
+      <div class="app-icon-box"><i class="fa-solid fa-palette"></i></div>
+      <div class="app-name">Canva</div>
+      <div class="app-type">ডিজাইন প্রিমিয়াম</div>
+      <div class="app-status">প্রিমিয়াম</div>
+    </div>
+  </a>
+
+</div>
+
+<div class="section-title">
+  অ্যাকাউন্ট সেন্টার
+</div>
+
+<div class="portal-box">
+  <div class="portal-info">
+    <div class="portal-title">প্রিমিয়াম মেম্বার পোর্টাল</div>
+    <div class="portal-sub">ক্লাউড ডাউনলোড সিঙ্ক করতে সাইন ইন করুন</div>
+  </div>
+  <button class="portal-btn"><i class="fa-solid fa-right-to-bracket" style="margin-right: 6px;"></i>সাইন ইন</button>
+</div>
+
+<div class="bottom-nav">
+
+  <a href="#" class="nav-item active">
+    <i class="fa-solid fa-house nav-icon"></i>
+    <div class="nav-text">হোম</div>
+  </a>
+
+  <a href="#" class="nav-item">
+    <i class="fa-solid fa-cubes nav-icon"></i>
+    <div class="nav-text">অ্যাপস</div>
+  </a>
+
+  <a href="#" class="nav-item">
+    <i class="fa-solid fa-cloud-arrow-down nav-icon"></i>
+    <div class="nav-text">আপডেট</div>
+  </a>
+
+  <a href="#" class="nav-item">
+    <i class="fa-solid fa-circle-user nav-icon"></i>
+    <div class="nav-text">প্রোফাইল</div>
+  </a>
+
+</div>
+
+</body>
+</html>
