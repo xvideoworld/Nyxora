@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nyxora Store</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #e8eaf0;
+  --surface: #eef0f5;
+  --shadow-light: #ffffff;
+  --shadow-dark: #c8cad4;
+  --text: #2d2f3a;
+  --text-muted: #8a8d9e;
+  --red: #e63946;
+  --red-dark: #c1121f;
+  --neu-raised: 6px 6px 14px var(--shadow-dark), -4px -4px 10px var(--shadow-light);
+  --neu-pressed: inset 4px 4px 10px var(--shadow-dark), inset -3px -3px 8px var(--shadow-light);
+  --neu-card: 8px 8px 20px var(--shadow-dark), -5px -5px 14px var(--shadow-light);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--bg); font-family: 'Nunito', sans-serif; color: var(--text); min-height: 100vh; }
+
+/* ===== LANGUAGE SCREEN ===== */
+#langScreen {
+  position: fixed; inset: 0; background: var(--bg);
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  z-index: 1000; padding: 30px 20px;
+  transition: opacity 0.4s, transform 0.4s;
+}
+#langScreen.hide { opacity: 0; transform: scale(0.95); pointer-events: none; }
+
+.lang-logo {
+  font-size: 36px; font-weight: 900; color: var(--red);
+  letter-spacing: -1px; margin-bottom: 8px;
+}
+.lang-subtitle { font-size: 13px; color: var(--text-muted); margin-bottom: 40px; }
+
+.lang-card {
+  background: var(--surface);
+  box-shadow: var(--neu-card);
+  border-radius: 24px;
+  padding: 28px 20px;
+  width: 100%; max-width: 420px;
+}
+.lang-card h2 { font-size: 18px; font-weight: 800; margin-bottom: 18px; text-align: center; }
+
+.lang-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 10px; max-height: 55vh; overflow-y: auto;
+  padding-right: 4px;
+}
+.lang-grid::-webkit-scrollbar { width: 4px; }
+.lang-grid::-webkit-scrollbar-thumb { background: var(--shadow-dark); border-radius: 4px; }
+
+.lang-btn {
+  background: var(--surface);
+  box-shadow: var(--neu-raised);
+  border: none; border-radius: 14px;
+  padding: 11px 10px; cursor: pointer;
+  font-family: 'Nunito', sans-serif;
+  font-size: 13px; font-weight: 700;
+  color: var(--text); display: flex;
+  align-items: center; gap: 8px;
+  transition: all 0.15s;
+}
+.lang-btn:active { box-shadow: var(--neu-pressed); transform: scale(0.97); }
+.lang-btn.selected { box-shadow: var(--neu-pressed); color: var(--red); }
+.lang-flag { font-size: 20px; }
+
+.lang-confirm {
+  margin-top: 20px; width: 100%;
+  background: var(--red); color: #fff;
+  border: none; border-radius: 16px;
+  padding: 14px; font-family: 'Nunito', sans-serif;
+  font-size: 15px; font-weight: 800;
+  cursor: pointer; box-shadow: 4px 4px 12px rgba(230,57,70,0.4);
+  transition: all 0.2s;
+}
+.lang-confirm:active { transform: scale(0.97); background: var(--red-dark); }
+
+/* ===== MAIN APP ===== */
+#mainApp { display: none; }
+#mainApp.show { display: block; }
+
+/* Header */
+.header {
+  background: var(--surface);
+  box-shadow: 0 4px 20px var(--shadow-dark);
+  padding: 16px 18px 12px;
+  position: sticky; top: 0; z-index: 100;
+}
+.header-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+.header-logo { font-size: 22px; font-weight: 900; color: var(--red); letter-spacing: -0.5px; }
+.lang-switch-btn {
+  background: var(--surface); box-shadow: var(--neu-raised);
+  border: none; border-radius: 12px; padding: 7px 12px;
+  font-size: 13px; font-weight: 700; cursor: pointer;
+  color: var(--text); font-family: 'Nunito', sans-serif;
+  transition: all 0.15s;
+}
+.lang-switch-btn:active { box-shadow: var(--neu-pressed); }
+
+.search-wrap {
+  background: var(--surface);
+  box-shadow: var(--neu-pressed);
+  border-radius: 20px; padding: 10px 16px;
+  display: flex; align-items: center; gap: 10px;
+}
+.search-wrap input {
+  border: none; background: transparent; outline: none;
+  font-family: 'Nunito', sans-serif; font-size: 14px;
+  font-weight: 600; color: var(--text); width: 100%;
+}
+.search-wrap input::placeholder { color: var(--text-muted); }
+.search-icon { color: var(--text-muted); font-size: 16px; }
+
+/* Categories */
+.cats {
+  display: flex; gap: 9px; overflow-x: auto;
+  padding: 14px 18px 4px; scrollbar-width: none;
+}
+.cats::-webkit-scrollbar { display: none; }
+.cat-btn {
+  background: var(--surface); box-shadow: var(--neu-raised);
+  border: none; border-radius: 20px; padding: 8px 18px;
+  font-family: 'Nunito', sans-serif; font-size: 13px;
+  font-weight: 700; color: var(--text-muted);
+  white-space: nowrap; cursor: pointer; transition: all 0.2s;
+}
+.cat-btn.active {
+  background: var(--red); color: #fff;
+  box-shadow: 3px 3px 10px rgba(230,57,70,0.35);
+}
+
+/* App count */
+.app-count-bar { padding: 10px 18px 6px; font-size: 12px; color: var(--text-muted); font-weight: 700; }
+
+/* App List */
+.app-list { padding: 6px 18px 100px; display: flex; flex-direction: column; gap: 12px; }
+
+.app-card {
+  background: var(--surface); box-shadow: var(--neu-card);
+  border-radius: 20px; padding: 14px 16px;
+  display: flex; align-items: center; gap: 14px;
+  cursor: pointer; transition: transform 0.15s;
+}
+.app-card:active { transform: scale(0.98); }
+
+.app-logo {
+  width: 58px; height: 58px; border-radius: 14px;
+  object-fit: cover; flex-shrink: 0;
+  box-shadow: 3px 3px 8px var(--shadow-dark), -2px -2px 6px var(--shadow-light);
+}
+
+.app-info { flex: 1; min-width: 0; }
+.app-name-text { font-size: 15px; font-weight: 800; color: var(--text); margin-bottom: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.app-desc-text { font-size: 12px; color: var(--text-muted); font-weight: 600; margin-bottom: 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.app-meta { display: flex; align-items: center; gap: 8px; }
+.app-rating { font-size: 11px; font-weight: 700; color: #f4a261; }
+.app-category-tag {
+  font-size: 10px; font-weight: 700; background: var(--bg);
+  box-shadow: 2px 2px 5px var(--shadow-dark), -1px -1px 4px var(--shadow-light);
+  padding: 2px 8px; border-radius: 10px; color: var(--text-muted);
+}
+
+.dl-btn {
+  background: var(--red); color: #fff;
+  border: none; border-radius: 14px;
+  padding: 10px 16px; font-family: 'Nunito', sans-serif;
+  font-size: 12px; font-weight: 800;
+  cursor: pointer; white-space: nowrap; flex-shrink: 0;
+  box-shadow: 3px 3px 10px rgba(230,57,70,0.4);
+  transition: all 0.15s; text-decoration: none;
+  display: flex; align-items: center; gap: 5px;
+}
+.dl-btn:active { background: var(--red-dark); transform: scale(0.96); }
+
+/* No result */
+.no-result { text-align: center; padding: 60px 20px; color: var(--text-muted); font-weight: 700; font-size: 15px; }
+
+/* ===== DETAIL PAGE ===== */
+#detailPage {
+  position: fixed; inset: 0; background: var(--bg);
+  z-index: 200; overflow-y: auto;
+  transform: translateX(100%);
+  transition: transform 0.35s cubic-bezier(.4,0,.2,1);
+}
+#detailPage.open { transform: translateX(0); }
+
+.detail-header {
+  background: var(--surface);
+  box-shadow: 0 4px 16px var(--shadow-dark);
+  padding: 16px 18px; display: flex;
+  align-items: center; gap: 14px;
+  position: sticky; top: 0; z-index: 10;
+}
+.back-btn {
+  background: var(--surface); box-shadow: var(--neu-raised);
+  border: none; border-radius: 12px; width: 38px; height: 38px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px; cursor: pointer; flex-shrink: 0;
+  transition: all 0.15s;
+}
+.back-btn:active { box-shadow: var(--neu-pressed); }
+.detail-header-title { font-size: 16px; font-weight: 800; flex: 1; }
+
+.detail-hero { padding: 24px 18px 16px; display: flex; gap: 16px; align-items: flex-start; }
+.detail-logo {
+  width: 88px; height: 88px; border-radius: 20px;
+  object-fit: cover; flex-shrink: 0;
+  box-shadow: var(--neu-card);
+}
+.detail-hero-info { flex: 1; }
+.detail-app-name { font-size: 20px; font-weight: 900; margin-bottom: 4px; }
+.detail-app-dev { font-size: 13px; color: var(--red); font-weight: 700; margin-bottom: 10px; }
+
+.detail-dl-btn {
+  background: var(--red); color: #fff;
+  border: none; border-radius: 16px;
+  padding: 12px 24px; font-family: 'Nunito', sans-serif;
+  font-size: 14px; font-weight: 800;
+  cursor: pointer; width: 100%;
+  box-shadow: 4px 4px 14px rgba(230,57,70,0.45);
+  transition: all 0.2s; text-decoration: none;
+  display: block; text-align: center;
+}
+.detail-dl-btn:active { background: var(--red-dark); transform: scale(0.97); }
+
+/* Stats row */
+.stats-row {
+  display: flex; gap: 0;
+  margin: 0 18px 20px;
+  background: var(--surface);
+  box-shadow: var(--neu-card);
+  border-radius: 18px; overflow: hidden;
+}
+.stat-item {
+  flex: 1; text-align: center; padding: 14px 8px;
+  border-right: 1px solid var(--bg);
+}
+.stat-item:last-child { border-right: none; }
+.stat-val { font-size: 16px; font-weight: 900; color: var(--text); }
+.stat-lbl { font-size: 10px; color: var(--text-muted); font-weight: 700; margin-top: 2px; }
+
+/* Section */
+.detail-section { padding: 0 18px 20px; }
+.section-title { font-size: 15px; font-weight: 900; margin-bottom: 12px; }
+
+.desc-box {
+  background: var(--surface); box-shadow: var(--neu-card);
+  border-radius: 18px; padding: 16px;
+  font-size: 13px; line-height: 1.7; color: var(--text);
+  font-weight: 600;
+}
+
+/* Features */
+.features-list { display: flex; flex-direction: column; gap: 8px; }
+.feature-item {
+  background: var(--surface); box-shadow: var(--neu-raised);
+  border-radius: 14px; padding: 12px 14px;
+  display: flex; align-items: center; gap: 10px;
+  font-size: 13px; font-weight: 700;
+}
+.feature-icon { font-size: 18px; }
+
+/* Tags */
+.tags { display: flex; flex-wrap: wrap; gap: 8px; }
+.tag {
+  background: var(--surface); box-shadow: var(--neu-raised);
+  border-radius: 20px; padding: 6px 14px;
+  font-size: 12px; font-weight: 700; color: var(--text-muted);
+}
+
+/* Related */
+.related-list { display: flex; gap: 12px; overflow-x: auto; padding-bottom: 8px; }
+.related-list::-webkit-scrollbar { display: none; }
+.related-card {
+  background: var(--surface); box-shadow: var(--neu-raised);
+  border-radius: 16px; padding: 12px;
+  text-align: center; flex-shrink: 0; width: 110px; cursor: pointer;
+  transition: transform 0.15s;
+}
+.related-card:active { transform: scale(0.96); }
+.related-logo { width: 52px; height: 52px; border-radius: 12px; object-fit: cover; margin-bottom: 8px; }
+.related-name { font-size: 11px; font-weight: 800; color: var(--text); margin-bottom: 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.related-dl {
+  background: var(--red); color: #fff;
+  border: none; border-radius: 10px;
+  padding: 5px 10px; font-size: 10px; font-weight: 800;
+  cursor: pointer; width: 100%; font-family: 'Nunito', sans-serif;
+  box-shadow: 2px 2px 8px rgba(230,57,70,0.35);
+}
+</style>
+</head>
+<body>
+
+<!-- LANGUAGE SCREEN -->
+<div id="langScreen">
+  <div class="lang-logo">⚡ Nyxora</div>
+  <div class="lang-subtitle">Choose your language to continue</div>
+  <div class="lang-card">
+    <h2>🌍 Select Language</h2>
+    <div class="lang-grid" id="langGrid"></div>
+    <button class="lang-confirm" onclick="confirmLang()">Continue →</button>
+  </div>
+</div>
+
+<!-- MAIN APP -->
+<div id="mainApp">
+  <div class="header">
+    <div class="header-top">
+      <div class="header-logo">⚡ Nyxora</div>
+      <button class="lang-switch-btn" onclick="showLangScreen()" id="langSwitchBtn">🌐 EN</button>
+    </div>
+    <div class="search-wrap">
+      <span class="search-icon">🔍</span>
+      <input type="text" id="searchInput" placeholder="Search apps..." onkeyup="filterApps()">
+    </div>
+  </div>
+
+  <div class="cats">
+    <button class="cat-btn active" onclick="filterCat('All')" data-cat="All">All</button>
+    <button class="cat-btn" onclick="filterCat('Editors')" data-cat="Editors">Editors</button>
+    <button class="cat-btn" onclick="filterCat('Tools')" data-cat="Tools</button>
+    <button class="cat-btn" onclick="filterCat('Games')" data-cat="Games">Games</button>
+    <button class="cat-btn" onclick="filterCat('Streaming')" data-cat="Streaming">Streaming</button>
+  </div>
+
+  <div class="app-count-bar" id="appCountBar">32 apps</div>
+  <div class="app-list" id="appList"></div>
+  <div class="no-result" id="noResult" style="display:none;">😕 No apps found</div>
+</div>
+
+<!-- DETAIL PAGE -->
+<div id="detailPage">
+  <div class="detail-header">
+    <button class="back-btn" onclick="closeDetail()">←</button>
+    <div class="detail-header-title" id="detailHeaderTitle">App Detail</div>
+  </div>
+  <div id="detailContent"></div>
+</div>
+
+<script>
+// ===== LANGUAGES =====
+const languages = [
+  {code:'en', flag:'🇬🇧', name:'English'},
+  {code:'bn', flag:'🇧🇩', name:'বাংলা'},
+  {code:'hi', flag:'🇮🇳', name:'हिन्दी'},
+  {code:'ar', flag:'🇸🇦', name:'العربية'},
+  {code:'ur', flag:'🇵🇰', name:'اردو'},
+  {code:'es', flag:'🇪🇸', name:'Español'},
+  {code:'fr', flag:'🇫🇷', name:'Français'},
+  {code:'id', flag:'🇮🇩', name:'Indonesia'},
+  {code:'tr', flag:'🇹🇷', name:'Türkçe'},
+  {code:'ru', flag:'🇷🇺', name:'Русский'},
+  {code:'pt', flag:'🇧🇷', name:'Português'},
+  {code:'de', flag:'🇩🇪', name:'Deutsch'},
+  {code:'ja', flag:'🇯🇵', name:'日本語'},
+  {code:'ko', flag:'🇰🇷', name:'한국어'},
+  {code:'zh', flag:'🇨🇳', name:'中文'},
+  {code:'ms', flag:'🇲🇾', name:'Melayu'},
+  {code:'th', flag:'🇹🇭', name:'ภาษาไทย'},
+  {code:'vi', flag:'🇻🇳', name:'Tiếng Việt'},
+  {code:'fa', flag:'🇮🇷', name:'فارسی'},
+  {code:'sw', flag:'🇹🇿', name:'Swahili'},
+  {code:'nl', flag:'🇳🇱', name:'Nederlands'},
+  {code:'it', flag:'🇮🇹', name:'Italiano'},
+  {code:'pl', flag:'🇵🇱', name:'Polski'},
+  {code:'ro', flag:'🇷🇴', name:'Română'},
+  {code:'uk', flag:'🇺🇦', name:'Українська'},
+  {code:'sv', flag:'🇸🇪', name:'Svenska'},
+  {code:'da', flag:'🇩🇰', name:'Dansk'},
+  {code:'fi', flag:'🇫🇮', name:'Suomi'},
+  {code:'hu', flag:'🇭🇺', name:'Magyar'},
+  {code:'cs', flag:'🇨🇿', name:'Čeština'},
+  {code:'el', flag:'🇬🇷', name:'Ελληνικά'},
+  {code:'he', flag:'🇮🇱', name:'עברית'},
+  {code:'ta', flag:'🇱🇰', name:'தமிழ்'},
+  {code:'te', flag:'🇮🇳', name:'తెలుగు'},
+  {code:'ml', flag:'🇮🇳', name:'മലയാളം'},
+  {code:'mr', flag:'🇮🇳', name:'मराठी'},
+  {code:'gu', flag:'🇮🇳', name:'ગુજરાતી'},
+  {code:'pa', flag:'🇮🇳', name:'ਪੰਜਾਬੀ'},
+  {code:'ne', flag:'🇳🇵', name:'नेपाली'},
+  {code:'si', flag:'🇱🇰', name:'සිංහල'},
+  {code:'my', flag:'🇲🇲', name:'မြန်မာ'},
+  {code:'km', flag:'🇰🇭', name:'ខ្មែរ'},
+  {code:'lo', flag:'🇱🇦', name:'ລາວ'},
+  {code:'az', flag:'🇦🇿', name:'Azərbaycan'},
+  {code:'kk', flag:'🇰🇿', name:'Қазақша'},
+  {code:'uz', flag:'🇺🇿', name:'Oʻzbekcha'},
+  {code:'am', flag:'🇪🇹', name:'አማርኛ'},
+  {code:'ha', flag:'🇳🇬', name:'Hausa'},
+  {code:'yo', flag:'🇳🇬', name:'Yorùbá'},
+  {code:'zu', flag:'🇿🇦', name:'isiZulu'},
+];
+
+const t = {
+  en: { search:'Search apps...', all:'All', editors:'Editors', tools:'Tools', games:'Games', streaming:'Streaming', download:'Download', apps:'apps', back:'←', description:'About this app', features:'Key Features', tags:'Tags', related:'Related Apps', version:'Version', size:'Size', rating:'Rating', install:'Install', developer:'Nyxora Store', noApps:'No apps found 😕', selectLang:'Select Language', continue:'Continue →', chooseLanguage:'Choose your language to continue' },
+  bn: { search:'অ্যাপ খুঁজুন...', all:'সব', editors:'এডিটর', tools:'টুলস', games:'গেমস', streaming:'স্ট্রিমিং', download:'ডাউনলোড', apps:'টি অ্যাপ', back:'←', description:'এই অ্যাপ সম্পর্কে', features:'মূল বৈশিষ্ট্য', tags:'ট্যাগ', related:'সংশ্লিষ্ট অ্যাপ', version:'ভার্সন', size:'সাইজ', rating:'রেটিং', install:'ইনস্টল করুন', developer:'Nyxora Store', noApps:'কোনো অ্যাপ পাওয়া যায়নি 😕', selectLang:'ভাষা বেছে নিন', continue:'চালিয়ে যান →', chooseLanguage:'চালিয়ে যেতে আপনার ভাষা বেছে নিন' },
+  hi: { search:'ऐप खोजें...', all:'सभी', editors:'एडिटर', tools:'टूल्स', games:'गेम्स', streaming:'स्ट्रीमिंग', download:'डाउनलोड', apps:'ऐप्स', back:'←', description:'इस ऐप के बारे में', features:'मुख्य विशेषताएं', tags:'टैग', related:'संबंधित ऐप्स', version:'वर्शन', size:'साइज़', rating:'रेटिंग', install:'इंस्टॉल करें', developer:'Nyxora Store', noApps:'कोई ऐप नहीं मिला 😕', selectLang:'भाषा चुनें', continue:'जारी रखें →', chooseLanguage:'जारी रखने के लिए अपनी भाषा चुनें' },
+  ar: { search:'ابحث عن التطبيقات...', all:'الكل', editors:'المحررون', tools:'الأدوات', games:'الألعاب', streaming:'البث', download:'تحميل', apps:'تطبيقات', back:'→', description:'عن هذا التطبيق', features:'الميزات الرئيسية', tags:'الوسوم', related:'تطبيقات ذات صلة', version:'الإصدار', size:'الحجم', rating:'التقييم', install:'تثبيت', developer:'Nyxora Store', noApps:'لا توجد تطبيقات 😕', selectLang:'اختر اللغة', continue:'متابعة →', chooseLanguage:'اختر لغتك للمتابعة' },
+  es: { search:'Buscar apps...', all:'Todo', editors:'Editores', tools:'Herramientas', games:'Juegos', streaming:'Streaming', download:'Descargar', apps:'apps', back:'←', description:'Sobre esta app', features:'Características', tags:'Etiquetas', related:'Apps relacionadas', version:'Versión', size:'Tamaño', rating:'Calificación', install:'Instalar', developer:'Nyxora Store', noApps:'No se encontraron apps 😕', selectLang:'Seleccionar idioma', continue:'Continuar →', chooseLanguage:'Elige tu idioma para continuar' },
+};
+// For other languages, fall back to English
+const getLang = (code) => t[code] || t['en'];
+
+let selectedLang = 'en';
+let currentCat = 'All';
+
+// Build language grid
+const langGrid = document.getElementById('langGrid');
+languages.forEach(l => {
+  const btn = document.createElement('button');
+  btn.className = 'lang-btn';
+  btn.dataset.code = l.code;
+  btn.innerHTML = `<span class="lang-flag">${l.flag}</span>${l.name}`;
+  btn.onclick = () => {
+    document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+    selectedLang = l.code;
+  };
+  langGrid.appendChild(btn);
+});
+// Default select English
+langGrid.querySelector('[data-code="en"]').classList.add('selected');
+
+function confirmLang() {
+  const ls = document.getElementById('langScreen');
+  ls.classList.add('hide');
+  setTimeout(() => { ls.style.display = 'none'; }, 400);
+  document.getElementById('mainApp').classList.add('show');
+  applyLang();
+  renderApps();
+}
+
+function showLangScreen() {
+  const ls = document.getElementById('langScreen');
+  ls.style.display = 'flex';
+  ls.classList.remove('hide');
+}
+
+function applyLang() {
+  const l = getLang(selectedLang);
+  document.getElementById('searchInput').placeholder = l.search;
+  document.getElementById('langSwitchBtn').textContent = '🌐 ' + (languages.find(x=>x.code===selectedLang)?.flag || '🌐');
+  document.querySelectorAll('.cat-btn').forEach(b => {
+    const cat = b.dataset.cat;
+    b.textContent = cat === 'All' ? l.all : cat === 'Editors' ? l.editors : cat === 'Tools' ? l.tools : cat === 'Games' ? l.games : l.streaming;
+  });
+  filterApps();
+}
+
+// ===== APP DATA =====
+const apps = [
+  { id:0, name:'Farming Simulator 20', desc:'Realistic Farm Simulation Game', cat:'Games', img:'https://i.postimg.cc/65JyFb7p/1709735747-farming-simulator-20.jpg', apk:'https://github.com/xvideoworld/Nyxora/releases/download/v20/Farming_Simulator_20.apk', version:'v20', size:'650 MB', rating:'4.3 ★', about:'Farming Simulator 20 brings the most complete farming experience to mobile! Drive over 100 authentic vehicles and machines from top agricultural brands. Manage your farm, grow crops, raise livestock and sell your products.', features:['100+ authentic farm vehicles','Crop farming & harvesting','Animal husbandry','Multiplayer mode','Realistic open world'] },
+  { id:1, name:'Picsart Pro', desc:'AI Photo & Video Editor', cat:'Editors', img:'https://i.postimg.cc/FsTX07QJ/Picsart-26-05-21-13-50-32-520.jpg', apk:'https://github.com/xvideoworld/Nyxora/releases/download/v29.8.5/Picsart_29.8.5_.Pro.apk', version:'v29.8.5', size:'85 MB', rating:'4.7 ★', about:'Picsart is the worlds #1 creative platform. Edit photos with powerful AI tools, make videos with templates, create stunning collages, and express your creativity. All Pro features unlocked!', features:['AI Photo editing tools','Video editor with effects','1000+ templates','Background remover','Pro filters & stickers'] },
+  { id:2, name:'CapCut Pro', desc:'Professional Video Editor', cat:'Editors', img:'https://i.postimg.cc/XvFP1vtH/Picsart-26-05-21-13-51-32-987.png', apk:'https://github.com/xvideoworld/Nyxora/releases/download/v17.3.0/CapCut_17.3.0.apk', version:'v17.3.0', size:'120 MB', rating:'4.8 ★', about:'CapCut is the all-in-one video editing app. Create stunning videos with professional tools. AI-powered features, trending effects and music. Used by millions of creators worldwide.', features:['AI video editing','Auto captions & subtitles','Trending effects & filters','Background music library','No watermark'] },
+  { id:3, name:'SnapTube Pro', desc:'Video & Music Downloader', cat:'Tools', img:'https://i.postimg.cc/cHhXPthd/Picsart-26-05-21-13-51-56-844.png', apk:'https://github.com/xvideoworld/Nyxora/releases/download/v15.4.0/SnapTube_v5.apk', version:'v15.4.0', size:'28 MB', rating:'4.5 ★', about:'SnapTube lets you download videos and music from YouTube, Facebook, Instagram and 50+ other platforms. Download in HD quality and save to your device for offline viewing.', features:['Download from 50+ platforms','HD & 4K quality download','MP3 audio extraction','Fast download speed','No ads'] },
+  { id:4, name:'Meitu Pro', desc:'AI Photo Retouch & Collage', cat:'Editors', img:'https://i.postimg.cc/LsBTZgcp/Picsart-26-05-21-13-53-59-866.png', apk:'https://github.com/xvideoworld/Nyxora/releases/download/v9.7.0.6/Meitu_9.7.0.6.apk', version:'v9.7.0.6', size:'95 MB', rating:'4.6 ★', about:'Meitu is an AI-powered beauty camera and photo editor. Transform your selfies with advanced AI skin retouching, create beautiful collages and apply artistic effects.', features:['AI skin retouch','Selfie beautification','Photo collage maker','Artistic filters','Makeup effects'] },
+  { id:5, name:'TeraBox Premium', desc:'Cloud Storage & File Share', cat:'Tools', img:'https://i.postimg.cc/J7gb0Qs8/Picsart-26-05-21-13-54-50-591.png', apk:'https://github.com/xvideoworld/Nyxora/releases/download/v8.6.0/TeraBox_pro.apk', version:'v8.6.0', size:'45 MB', rating:'4.4 ★', about:'TeraBox offers 1TB of FREE cloud storage. Backup photos, videos and files. Share files easily with friends and family. Access your files from anywhere anytime.', features:['1TB free cloud storage','Auto photo backup','File sharing & sync','Password protected folder','Fast upload & download'] },
+  { id:6, name:'Hypic Pro', desc:'AI Photo Editing Tool', cat:'Editors', img:'https://i.postimg.cc/6qG4nD8y/Picsart-26-05-21-13-55-22-982.png', apk:'https://github.com/xvideoworld/Nyxora/releases/download/v8.5.0/Hypic_8.5.0_.Pro.apk', version:'v8.5.0', size:'72 MB', rating:'4.5 ★', about:'Hypic is a powerful AI photo editor with professional-grade tools. Enhance portraits, remove backgrounds, apply stunning filters and create amazing edits with just a few taps.', features:['AI portrait enhancement','Background removal','Professional filters','Skin smoothing','Object removal'] },
+  { id:7, name:'Gcam LMC 8.4', desc:'Professional Pixel Camera Mod', cat:'Tools', img:'https://i.postimg.cc/Fzt3Wr57/Picsart-26-05-21-13-55-54-841.png', apk:'https://github.com/xvideoworld/Nyxora/releases/download/v8.4.0/LMC8.4.apk', version:'v8.4', size:'62 MB', rating:'4.7 ★', about:'Google Camera (GCam) LMC 8.4 brings the best camera experience to your Android device. Capture stunning photos with Night Sight, Astrophotography mode and Google HDR+ processing.', features:['Google HDR+ processing','Night Sight mode','Astrophotography','Portrait mode','RAW photo capture'] },
+  { id:8, name:'KineMaster Pro', desc:'Advanced Video Editing', cat:'Editors', img:'https://i.postimg.cc/j5yLjymt/Picsart-26-05-21-13-56-22-186.png', apk:'https://github.com/xvideoworld/Nyxora/releases/download/v8.1.3/KineMaster_8.1.3.36292.GP.apk', version:'v8.1.3', size:'110 MB', rating:'4.6 ★', about:'KineMaster is a full-featured video editor for Android. Multi-layer video editing, precision trimming, chroma key compositing, speed controls and hundreds of effects and transitions.', features:['Multi-layer video editing','Chroma key (Green screen)','Speed control','Voice & sound effects','No watermark'] },
+  { id:9, name:'ReLens DSLR Pro', desc:'Large Aperture & DSLR Effect', cat:'Editors', img:'https://i.postimg.cc/YqDqMX08/Picsart-26-05-21-13-57-04-606.jpg', apk:'https://github.com/xvideoworld/Nyxora/releases/download/v7.8.0/ReLens.Pro.apk', version:'v7.8.0', size:'55 MB', rating:'4.4 ★', about:'ReLens Camera gives your phone photos a professional DSLR look. Simulate large aperture bokeh effects, add cinematic lens blur, and create stunning portrait photos with beautiful background blur.', features:['DSLR bokeh effect','Real-time preview','Cinematic blur','Portrait mode','Multiple lens styles'] },
+  { id:10, name:'Duolingo Pro', desc:'Language Learning App', cat:'Tools', img:'https://i.postimg.cc/VNBxL6g3/Picsart-26-05-21-13-58-56-547.jpg', apk:'https://github.com/xvideoworld/Nyxora/releases/download/v7.6.0/Duolingo.Pro.apk', version:'v7.6.0', size:'38 MB', rating:'4.8 ★', about:'Learn a new language with Duolingo! Fun, effective and free. Practice speaking, reading, listening and writing. Learn Spanish, French, German, Japanese and 40+ more languages.', features:['40+ languages available','Gamified learning','Daily streak system','Offline lessons','AI personalized path'] },
+  { id:11, name:'Photoshop Express', desc:'Professional Photo Editor', cat:'Editors', img:'https://i.postimg.cc/dVcNkFhC/Picsart-26-05-21-13-59-54-576.png', apk:'https://github.com/xvideoworld/Nyxora/releases/download/v5.3.0/Photoshop_v17.9.22.apk', version:'v17.9.22', size:'88 MB', rating:'4.5 ★', about:'Adobe Photoshop Express is a fast and easy picture editor. Quickly fix and share photos with one-touch filters, advanced editing tools, and collage maker by Adobe.', features:['One-touch auto fix','Advanced color adjustments','Noise reduction','Perspective correction','Adobe Creative Cloud sync'] },
+  { id:12, name:'Motion Ninja Pro', desc:'Video Editor & Animator', cat:'Editors', img:'https://i.postimg.cc/k4LzTbgw/Picsart-26-05-21-14-00-27-115.jpg', apk:'https://github.com/xvideoworld/Nyxora/releases/download/v5.1.0/Motion.Ninja.Pro.apk', version:'v5.1.0', size:'78 MB', rating:'4.4 ★', about:'Motion Ninja is a powerful video editor and animation maker. Create keyframe animations, add stunning visual effects, motion blur and cinematic transitions to make your videos stand out.', features:['Keyframe animation','Motion effects & blur','Cinematic transitions','Speed ramping','Multi-track timeline'] },
+  { id:13, name:'Alight Motion Pro', desc:'Motion Graphics & Animation', cat:'Editors', img:'https://i.postimg.cc/1z2vSZ13/Picsart-26-05-21-14-01-11-647.png', apk:'https://github.com/xvideoworld/Nyxora/releases/download/5.0.273/Alight.Motion_5.0.273.1028417.apk', version:'v5.0.273', size:'130 MB', rating:'4.7 ★', about:'Alight Motion is the first professional motion graphics app for your phone. Create amazing animations, visual effects, and video compositions. Used by professional content creators worldwide.', features:['Professional animation tools','Vector & bitmap support','Multi-layer compositing','Color correction & grading','Export without watermark'] },
+  { id:14, name:'YouTube Lite', desc:'Fast & Smooth Video Streaming', cat:'Streaming', img:'https://i.postimg.cc/Kv0rFynX/Picsart-26-05-21-14-03-58-172.jpg', apk:'https://github.com/xvideoworld/Nyxora/releases/download/v4.7.0/YouTube.Lite.apk', version:'v4.7.0', size:'18 MB', rating:'4.3 ★', about:'YouTube Lite is a lightweight version of YouTube designed for low-end devices and slow internet connections. Stream videos smoothly without buffering with minimal data usage.', features:['Low data usage','Fast loading','Background play','Ad-free experience','Lightweight & fast'] },
+  { id:15, name:'PrettyUp Pro', desc:'Video Body & Face Editor', cat:'Editors', img:'https://i.postimg.cc/d19ZB8BR/Picsart-26-05-21-14-06-22-519.png', apk:'https://github.com/xvideoworld/Nyxora/releases/download/v4.3.0/PrettyUp.Pro.apk', version:'v4.3.0', size:'65 MB', rating:'4.3 ★', about:'PrettyUp is an AI-powered video beauty editor. Slim face, enlarge eyes, reshape body and smooth skin in real-time video. Make yourself look perfect in every video.', features:['Real-time face slimming','Body reshape in video','Skin smoothing','Eye enlargement','Beauty filters'] },
+  { id:16, name:'Remini AI', desc:'Photo Enhancer & Upscaler', cat:'Tools', img:'https://i.postimg.cc/kX2D6rk0/Picsart-26-05-21-14-07-44-368.jpg', apk:'https://github.com/xvideoworld/Nyxora/releases/download/3.7.1301/Remini_3.7.1301.202520348.apk', version:'v3.7.1', size:'42 MB', rating:'4.6 ★', about:'Remini uses cutting-edge AI technology to enhance old, blurry and low-quality photos. Restore old family photos, sharpen faces and upscale images to HD quality instantly.', features:['AI photo enhancement','Old photo restoration','Face sharpening','HD upscaling','Blur removal'] },
+  { id:17, name:'Captions AI', desc:'Auto Subtitle & Caption Maker', cat:'Editors', img:'https://i.postimg.cc/fbDwv1r9/Picsart-26-05-21-14-08-08-748.jpg', apk:'https://github.com/xvideoworld/Nyxora/releases/download/v3.5.0/Captions.AI.-.Captune.apk', version:'v3.5.0', size:'35 MB', rating:'4.5 ★', about:'Captions AI automatically generates accurate subtitles and captions for your videos. Support multiple languages, custom fonts and animated caption styles for social media content.', features:['Auto speech-to-text','Multi-language captions','Animated caption styles','Custom fonts & colors','Social media ready export'] },
+  { id:18, name:'Magic Eraser Pro', desc:'Object & Background Remover', cat:'Tools', img:'https://i.postimg.cc/7PGfbrvs/595115558-84821fb8-69cf-48d0-9857-b46282dfd5c3.jpg', apk:'https://github.com/xvideoworld/Nyxora/releases/download/v3.3.20/Magic.Eraser_3.3.20_.Pro.apk', version:'v3.3.20', size:'48 MB', rating:'4.5 ★', about:'Magic Eraser removes unwanted objects and people from photos with AI precision. Erase anything from your photos instantly and replace with natural-looking background.', features:['AI object removal','Background eraser','Touch-up & restore','Batch processing','High quality output'] },
+  { id:19, name:'InShot Pro', desc:'HD Video Editor & Trim App', cat:'Editors', img:'https://i.postimg.cc/gcZ2myRT/Picsart-26-05-21-14-08-52-015.png', apk:'https://github.com/xvideoworld/Nyxora/releases/download/2.196.1529/InShot_2.196.1529.apk', version:'v2.196', size:'80 MB', rating:'4.7 ★', about:'InShot is a powerful video editor and photo editor. Trim and cut video, add music, text and filters. Adjust video speed and create amazing content for Instagram, TikTok and YouTube.', features:['Video trim & cut','Add music & sound effects','Text & stickers','Speed control','No watermark'] },
+  { id:20, name:'VN Video Editor', desc:'Vlog & Movie Maker', cat:'Editors', img:'https://i.postimg.cc/13CQp4wq/Picsart-26-05-21-14-09-56-828.png', apk:'https://github.com/xvideoworld/Nyxora/releases/download/2.14.0/VN.-.Video.Editor_2.14.0.apk', version:'v2.14.0', size:'95 MB', rating:'4.6 ★', about:'VN Video Editor is a free professional video editing app. Multi-track timeline, advanced keyframe controls, cinematic color grading and smooth transitions for vloggers and filmmakers.', features:['Multi-track timeline','Keyframe animation','Cinematic color grading','No watermark','Professional transitions'] },
+  { id:21, name:'PixelLab Pro', desc:'Text on Pictures & Typography', cat:'Editors', img:'https://i.postimg.cc/nh6dbJty/Picsart-26-05-21-14-10-38-356.png', apk:'https://github.com/xvideoworld/Nyxora/releases/download/2.1.9/PixelLab_2.1.9.apk', version:'v2.1.9', size:'32 MB', rating:'4.5 ★', about:'PixelLab is the best app for adding text to pictures. Create amazing typography art, design social media posts, banners and graphics with hundreds of fonts and text effects.', features:['500+ font styles','3D text effects','Text shadow & glow','Custom stickers','Social media templates'] },
+  { id:22, name:'Spotify Lite Mod', desc:'Lightweight Music Player', cat:'Streaming', img:'https://i.postimg.cc/BvTBrPpM/Picsart-26-05-21-14-11-21-760.png', apk:'https://github.com/xvideoworld/Nyxora/releases/download/v2.0.8/Spotify.Lite_2.0.8.apk', version:'v2.0.8', size:'15 MB', rating:'4.4 ★', about:'Spotify Lite is a smaller and faster version of Spotify. Stream music, podcasts and audiobooks. Save data and storage space while enjoying all your favorite songs.', features:['Low data usage','Small app size','Offline listening','Podcast streaming','Background play'] },
+  { id:23, name:'Winkit Pro', desc:'AI Video Enhancer & Retouch', cat:'Tools', img:'https://i.postimg.cc/4NjvnQFz/Picsart-26-05-21-14-11-47-748.png', apk:'https://github.com/xvideoworld/Nyxora/releases/download/v2.0.2/Winkit_2.0.2.apk', version:'v2.0.2', size:'58 MB', rating:'4.3 ★', about:'Winkit AI enhances your videos with professional-grade tools. Improve video quality, reduce noise, stabilize shaky footage and apply cinematic effects with AI technology.', features:['AI video enhancement','Noise reduction','Video stabilization','Color correction','HD upscaling'] },
+  { id:24, name:'LMC 8.4 Filter Pack', desc:'GCam Preset & Filter Collection', cat:'Tools', img:'https://i.postimg.cc/4d3HWYSz/Picsart-26-05-21-14-12-43-028.jpg', apk:'https://github.com/xvideoworld/Nyxora/releases/download/v2.0.0/LMC-8.4.filter.zip', version:'v2.0.0', size:'12 MB', rating:'4.6 ★', about:'LMC 8.4 Filter Pack contains premium camera presets and XML configs for Google Camera. Get professional-looking photos with perfectly tuned settings for different lighting conditions.', features:['Premium XML configs','Multiple shooting modes','Night photography presets','Portrait optimization','Easy installation'] },
+  { id:25, name:'Photoroom Mod', desc:'AI Studio Photo Editor', cat:'Editors', img:'https://i.postimg.cc/QCTtz1kx/Picsart-26-05-21-14-13-08-735.jpg', apk:'https://github.com/xvideoworld/Nyxora/releases/download/v2/Photoroom.M0D.v2.apk', version:'v2.0', size:'68 MB', rating:'4.6 ★', about:'Photoroom uses AI to create professional product photos and portraits. Remove backgrounds instantly, add studio backgrounds and create amazing product listings for your business.', features:['Instant background removal','Studio backgrounds','Product photo creator','AI portrait mode','Batch editing'] },
+  { id:26, name:'Utool AI Enhancer', desc:'AI Video Frame & Quality Fixer', cat:'Tools', img:'https://i.postimg.cc/DzxcgJcG/Picsart-26-05-21-14-13-34-305.jpg', apk:'https://github.com/xvideoworld/Nyxora/releases/download/v1.172.78/AI.Video.Enhancer.-.Utool_1.172.78.apk', version:'v1.172', size:'75 MB', rating:'4.4 ★', about:'Utool AI Video Enhancer uses artificial intelligence to improve video quality. Upscale low-resolution videos, restore old footage and fix blurry videos to HD quality automatically.', features:['AI video upscaling','Frame interpolation','Blur & noise fix','Color enhancement','Batch video processing'] },
+  { id:27, name:'24FPS Video Editor', desc:'Cinematic Video Editor', cat:'Editors', img:'https://i.postimg.cc/k4kK1xR2/595407726-fd45314b-10a8-4a79-8b1d-ec93e6a97e9c.jpg', apk:'https://github.com/xvideoworld/Nyxora/releases/download/v1.0.0/24FPS.Video.Editor.apk', version:'v1.0.0', size:'52 MB', rating:'4.3 ★', about:'24FPS is a cinematic video editor designed for filmmakers and content creators. Create Hollywood-style videos with advanced color grading, film grain effects and anamorphic lens simulation.', features:['Cinematic color grading','Film grain effects','Anamorphic lens simulation','LUT support','4K export'] },
+  { id:28, name:'Lightroom Mobile', desc:'Professional Photo Color Grading', cat:'Editors', img:'https://i.postimg.cc/Y0KLfMTd/Picsart-26-05-21-14-14-33-319.png', apk:'https://github.com/xvideoworld/Nyxora/releases/download/11.3.3/lightroom-11.3.3-an1.com.apk', version:'v11.3.3', size:'102 MB', rating:'4.7 ★', about:'Adobe Lightroom Mobile is the professional photo editor used by photographers worldwide. Advanced color grading, RAW editing, selective adjustments and preset sync with desktop.', features:['RAW photo editing','Advanced color grading','AI-powered masking','Preset library','Adobe cloud sync'] },
+  { id:29, name:'Netflix Premium', desc:'Movies & TV Shows Stream', cat:'Streaming', img:'https://i.postimg.cc/xTgqqvjy/593674587-aa789283-0ee2-4970-a4d2-e1b574233ea9.png', apk:'https://github.com/xvideoworld/Nyxora/releases/download/v9.75.0/Netflix_9.75.0.apk', version:'v9.75.0', size:'55 MB', rating:'4.5 ★', about:'Netflix is the world\'s leading streaming service. Watch award-winning series, movies, documentaries and more on any device. Premium plan with 4K Ultra HD and no ads.', features:['4K Ultra HD streaming','Download for offline','Multiple profiles','All original content','Ad-free experience'] },
+  { id:30, name:'SUBR Plugin', desc:'System Utility Service', cat:'Tools', img:'https://i.postimg.cc/NfGjhK8m/594010530-be7fab84-dfe1-4149-8ef1-fbff07ad6aea.jpg', apk:'https://github.com/xvideoworld/Nyxora/releases/download/5.3.46/SUBR_5.3.46.apk', version:'v5.3.46', size:'22 MB', rating:'4.2 ★', about:'SUBR Plugin is a system utility service that improves the performance of other apps. It provides background services and optimizes app functionality for a smoother experience.', features:['System optimization','Background service','App performance boost','Battery optimization','Lightweight'] },
+  { id:31, name:'Minecraft', desc:'Premium Arcade Sandbox Game', cat:'Games', img:'https://i.postimg.cc/vBzwXvNk/593673904-6b1947b8-4e5a-4971-beb4-0b40dd14c289.jpg', apk:'https://github.com/xvideoworld/Nyxora/releases/download/1v1/Minecraft_premium.apk', version:'Premium', size:'950 MB', rating:'4.9 ★', about:'Minecraft is the best-selling video game of all time. Build anything you can imagine in creative mode, survive in survival mode, and explore infinite worlds with friends in multiplayer.', features:['Infinite open world','Creative & Survival mode','Multiplayer support','Marketplace content','Regular updates'] },
+];
+
+function renderApps() {
+  const l = getLang(selectedLang);
+  const list = document.getElementById('appList');
+  list.innerHTML = '';
+  let count = 0;
+  const search = (document.getElementById('searchInput').value||'').toLowerCase();
+  apps.forEach(app => {
+    if (currentCat !== 'All' && app.cat !== currentCat) return;
+    if (search && !app.name.toLowerCase().includes(search)) return;
+    count++;
+    const card = document.createElement('div');
+    card.className = 'app-card';
+    card.innerHTML = `
+      <img src="${app.img}" alt="${app.name}" class="app-logo" onerror="this.style.background='#ddd'">
+      <div class="app-info">
+        <div class="app-name-text">${app.name}</div>
+        <div class="app-desc-text">${app.desc}</div>
+        <div class="app-meta">
+          <span class="app-rating">${app.rating}</span>
+          <span class="app-category-tag">${app.cat}</span>
+        </div>
+      </div>
+      <button class="dl-btn" onclick="openDetail(${app.id}); event.stopPropagation();">
+        ⬇ ${l.download}
+      </button>
+    `;
+    card.onclick = () => openDetail(app.id);
+    list.appendChild(card);
+  });
+  document.getElementById('appCountBar').textContent = count + ' ' + l.apps;
+  document.getElementById('noResult').style.display = count === 0 ? 'block' : 'none';
+}
+
+function filterApps() { renderApps(); }
+
+function filterCat(cat) {
+  currentCat = cat;
+  document.querySelectorAll('.cat-btn').forEach(b => b.classList.toggle('active', b.dataset.cat === cat));
+  renderApps();
+}
+
+function openDetail(id) {
+  const app = apps[id];
+  const l = getLang(selectedLang);
+  document.getElementById('detailHeaderTitle').textContent = app.name;
+
+  // Related apps (same category, exclude self)
+  const related = apps.filter(a => a.cat === app.cat && a.id !== id).slice(0, 8);
+  const relatedHTML = related.map(a => `
+    <div class="related-card" onclick="openDetail(${a.id})">
+      <img src="${a.img}" alt="${a.name}" class="related-logo" onerror="this.style.background='#ddd'">
+      <div class="related-name">${a.name}</div>
+      <button class="related-dl" onclick="event.stopPropagation(); window.open('${a.apk}')">⬇</button>
+    </div>
+  `).join('');
+
+  const featuresHTML = app.features.map(f => `
+    <div class="feature-item"><span class="feature-icon">✅</span>${f}</div>
+  `).join('');
+
+  document.getElementById('detailContent').innerHTML = `
+    <div class="detail-hero">
+      <img src="${app.img}" alt="${app.name}" class="detail-logo">
+      <div class="detail-hero-info">
+        <div class="detail-app-name">${app.name}</div>
+        <div class="detail-app-dev">${l.developer}</div>
+        <a href="${app.apk}" class="detail-dl-btn">⬇ ${l.install}</a>
+      </div>
+    </div>
+
+    <div class="stats-row">
+      <div class="stat-item"><div class="stat-val">${app.rating}</div><div class="stat-lbl">${l.rating}</div></div>
+      <div class="stat-item"><div class="stat-val">${app.size}</div><div class="stat-lbl">${l.size}</div></div>
+      <div class="stat-item"><div class="stat-val">${app.version}</div><div class="stat-lbl">${l.version}</div></div>
+      <div class="stat-item"><div class="stat-val">${app.cat}</div><div class="stat-lbl">Category</div></div>
+    </div>
+
+    <div class="detail-section">
+      <div class="section-title">${l.description}</div>
+      <div class="desc-box">${app.about}</div>
+    </div>
+
+    <div class="detail-section">
+      <div class="section-title">${l.features}</div>
+      <div class="features-list">${featuresHTML}</div>
+    </div>
+
+    <div class="detail-section">
+      <div class="section-title">${l.tags}</div>
+      <div class="tags">
+        <span class="tag">${app.cat}</span>
+        <span class="tag">Android</span>
+        <span class="tag">Free</span>
+        <span class="tag">Premium</span>
+        <span class="tag">APK</span>
+      </div>
+    </div>
+
+    ${related.length > 0 ? `
+    <div class="detail-section">
+      <div class="section-title">${l.related}</div>
+      <div class="related-list">${relatedHTML}</div>
+    </div>` : ''}
+
+    <div style="padding: 0 18px 40px;">
+      <a href="${app.apk}" class="detail-dl-btn">⬇ ${l.install} — ${app.name}</a>
+    </div>
+  `;
+
+  document.getElementById('detailPage').classList.add('open');
+  document.getElementById('detailPage').scrollTop = 0;
+}
+
+function closeDetail() {
+  document.getElementById('detailPage').classList.remove('open');
+}
+</script>
+</body>
+</html>
